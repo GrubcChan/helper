@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head th:replace="parts/common :: common_header(~{::title})">
+    <title>Main</title>
+</head>
+<body>
+
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{messages(status='all',filter=${filter})}">Все</a>
+        </li>
+
+        <div th:each="status : ${statuses}">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{messages(status=${status.getName()},filter=${filter})}"
+                   th:text="${status.getName()}"></a>
+            </li>
+        </div>
+    </ul>
+
+    <hr>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <form method="GET" action="/messages" th:href="@{?status='open'}" class="form-inline">
+                <input type="text" th:value="${status}" style="display: none;" name="status"/>
+                <input type="text" th:value="${filter}" name="filter" placeholder="Поиск"/>
+                <button type="submit" class="btn btn-primary ml-2">Найти</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${is_invalid}">
+        <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+           aria-controls="collapseExample">
+            Создать заявку
+        </a>
+
+        <div class="collapse show" id="collapseExample">
+            <div class="form-group mt-3">
+                <form th:method="POST" th:action="@{/messages}" th:object="${message}">
+                    <div th:if="!${#fields.hasErrors('tag')}">
+                        <input type="text" name="tag" th:field="*{tag}" class="form-control"
+                               placeholder="Тэг"/>
+                    </div>
+                    <!--/*@thymesVar id="user" type""*/-->
+                    <div th:if="${#fields.hasErrors('tag')}">
+                        <input type="text" name="tag" th:field="*{tag}" class="form-control is-invalid"
+                               placeholder="Тэг"/>
+                        <div class="invalid-feedback">
+                            <a th:errors="*{tag}"></a>
+                        </div>
+                    </div>
+
+                    <div th:if="!${#fields.hasErrors('text')}">
+                        <input type="text" name="text" th:field="*{text}" class="form-control"
+                               placeholder="Текст"/>
+                    </div>
+                    <!--/*@thymesVar id="user" type""*/-->
+                    <div th:if="${#fields.hasErrors('text')}">
+                        <input type="text" name="text" th:field="*{text}" class="form-control is-invalid"
+                               placeholder="Текст"/>
+                        <div class="invalid-feedback">
+                            <a th:errors="*{text}"></a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Введите статус: </label>
+
+                        <select class="form-control" id="status" name="status_i">
+                            <div th:each="status : ${statuses}">
+                                <option th:value="${status.getName()}" th:text="${status.getName()}"></option>
+                            </div>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div th:if="${!is_invalid}">
+        <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample1" role="button" aria-expanded="false"
+           aria-controls="collapseExample">
+            Создать заявку
+        </a>
+
+        <div class="collapse" id="collapseExample1">
+            <div class="form-group mt-3">
+                <form th:method="POST" th:action="@{/messages}">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Тэг" name="tag"/>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control " placeholder="Текст заявки" name="text"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status1">Введите статус: </label>
+
+                        <select class="form-control" id="status1" name="status_i">
+                            <div th:each="status2 : ${statuses}">
+                                <option th:value="${status2.getName()}" th:text="${status2.getName()}"></option>
+                            </div>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div th:each="message : ${messages}">
+        <div class="card text-bg-info my-3">
+
+            <div th:if="${this_time.getTime()}-${message.getDate_create().getTime()} <= (${message.getStatus().getReaction_time()} - (${message.getStatus().getReaction_time()}/4))">
+                <div class="card-header text-center bg-success">
+                    <a style="color: whitesmoke"></a>
+                </div>
+            </div>
+            <div th:if="((${this_time.getTime()}-${message.getDate_create().getTime()}) > (${message.getStatus().getReaction_time()} - (${message.getStatus().getReaction_time()}/4)))">
+                <div th:if="((${this_time.getTime()}-${message.getDate_create().getTime()}) <= ${message.getStatus().getReaction_time()})">
+                    <div class="card-header text-center bg-warning">
+                        <a style="color: whitesmoke"></a>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${this_time.getTime()}-${message.getDate_create().getTime()} > ${message.getStatus().getReaction_time()}">
+                <div class="card-header text-center bg-danger">
+                    <a style="color: whitesmoke"></a>
+                </div>
+            </div>
+
+            <div class="card-body bg-light">
+                <h5 class="card-title text-center" th:text="${message.getTag()}">Название карточки</h5>
+                <hr>
+                <p class="card-text" th:text="${message.getText()}"></p>
+                <br>
+                <a class="card-text text-end">Дата создания: </a>
+                <a class="card-text text-end" th:text="${message.getDate_create()}"></a>
+                <br>
+                <a class="card-text text-right">Автор: </a>
+                <a class="card-text text-right my-2" th:text="${message.getAuthor().getUsername()}"></a>
+                <br>
+                <a class="card-text text-right">Статус: </a>
+                <a class="card-text text-right my-2" th:text="${message.getStatus().getName()}"></a>
+                <br>
+                <div sec:authorize="hasAuthority('MODERATOR')">
+
+                    <div class="form-group mt-3">
+                        <form th:method="PATCH" th:action="@{/messages/status/{id}(id=${message.getId()})}">
+
+                            <div class="form-group">
+                                <label for="status2">Сменить статус: </label>
+                                <select class="form-control" id="status2" name="status">
+                                    <div th:each="status_t : ${statuses}">
+                                        <option th:value="${status_t.getName()}"
+                                                th:text="${status_t.getName()}"></option>
+                                    </div>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Установить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer  bg-light text-center">
+                <a th:href="@{/messages/{id}(id=${message.getId()})}" style="color: dimgray">Подробнее</a>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+    <hr/>
+
+    <!--    <a href="/messages/new">Create new message</a>-->
+
+</div>
+
+<div th:replace="parts/common :: bootstrap_scripts"></div>
+
+
+</body>
+</html>

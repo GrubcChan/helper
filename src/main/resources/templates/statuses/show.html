@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="parts/common :: common_header(~{::title})">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+
+    <a th:href="@{/statuses}">Назад</a>
+
+    <div class="card text-bg-info my-3">
+        <div class="card-body">
+            <a class="card-text">id: </a>
+            <a class="card-text" th:text="${status.getId()}"></a>
+            <br>
+            <a class="card-text">Наименование: </a>
+            <a class="card-text" th:text="${status.getName()}"></a>
+            <br>
+            <a class="card-text">Время реакции: </a>
+            <a class="card-text" th:text="${status.getReaction_time()}"></a>
+            <br>
+
+            <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button"
+               aria-expanded="false"
+               aria-controls="collapseExample">
+                Редактировать
+            </a>
+
+            <div class="collapse" id="collapseExample">
+                <div class="form-group mt-3">
+                    <form th:method="PATCH" th:action="@{/statuses/{id}(id=${status.getId()})}">
+
+                        <div class="form-group">
+                            <label>
+                                <input type="text" th:value="${status.getName()}" class="form-control" placeholder="Название" name="name"/>
+                            </label>
+                        </div>
+
+                        <br/>
+
+                        <div class="row align-items-start">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="count_day" >Количество дней: </label>
+                                    <input type="number" class="form-control" name="count_day" id="count_day"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="count_hour" >Количество часов: </label>
+                                    <input type="number" class="form-control" name="count_hour" id="count_hour"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="count_minute" >Количество минут: </label>
+                                    <input type="number" class="form-control" name="count_minute" id="count_minute"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="count_cec" >Количество секунд: </label>
+                                    <input type="number" class="form-control" name="count_cec" id="count_cec"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br/>
+
+                        <div class=" my-3">
+                            <button type="submit" class="btn btn-primary">Обновить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <form th:method="DELETE" th:action="@{/statuses/{id}(id=${status.getId()})}">
+                <button type="submit" class="btn btn-outline-danger my-3">Удалить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="parts/common :: bootstrap_scripts"></div>
+
+</body>
+</html>

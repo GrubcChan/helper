@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="parts/common :: common_header(~{::title})">
+    <title>Index</title>
+</head>
+<body>
+
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+       aria-controls="collapseExample">
+        Создать новый статус
+    </a>
+
+    <div class="collapse" id="collapseExample">
+        <div class="form-group mt-3">
+            <form th:method="POST" th:action="@{/statuses}">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Название" name="name"/>
+                </div>
+
+                <br/>
+
+                <div class="row align-items-start">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="count_day" >Количество дней: </label>
+                            <input type="number" class="form-control" name="count_day" id="count_day"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="count_hour" >Количество часов: </label>
+                            <input type="number" class="form-control" name="count_hour" id="count_hour"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="count_minute" >Количество минут: </label>
+                            <input type="number" class="form-control" name="count_minute" id="count_minute"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="count_cec" >Количество секунд: </label>
+                            <input type="number" class="form-control" name="count_cec" id="count_cec"/>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Наименование</th>
+            <th scope="col">Время реакции</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <div th:each="status : ${statuses}">
+            <tr>
+                <th scope="row" th:text="${status.getId()}"></th>
+                <td th:text="${status.getName()}"></td>
+                <td th:text="${status.getReaction_time()}"></td>
+                <td><a th:href="@{/statuses/{id}(id=${status.getId()})}">Подробнее</a></td>
+            </tr>
+        </div>
+        </tbody>
+    </table>
+
+    <br/>
+    <hr/>
+
+</div>
+
+<div th:replace="parts/common :: bootstrap_scripts"></div>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="parts/common :: common_header(~{::title})">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+
+    <a th:href="@{/users}">Назад</a>
+
+    <div class="card text-bg-info my-3">
+        <div class="card-body">
+            <a class="card-text">id пользователя: </a>
+            <a class="card-text" th:text="${user_i.getId()}"></a>
+            <br>
+            <a class="card-text">Имя пользователя: </a>
+            <a class="card-text" th:text="${user_i.getUsername()}"></a>
+            <br>
+            <a class="card-text">Пароль: </a>
+            <a class="card-text" th:text="${user_i.getPassword()}"></a>
+            <br>
+            <a class="card-text text-end">Роли: </a>
+            <a class="card-text text-end" th:text="${#strings.listJoin(user_i.getRoles(),', ')}"></a>
+            <br>
+            <a class="card-text text-end">Активность: </a>
+            <a class="card-text text-end" th:text="${user_i.isActive()}"></a>
+            <br>
+
+            <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button"
+               aria-expanded="false"
+               aria-controls="collapseExample">
+                Редактировать
+            </a>
+
+            <div class="collapse" id="collapseExample">
+                <div class="form-group mt-3">
+                    <form th:method="PATCH" th:action="@{/users/{id}(id=${user_i.getId()})}">
+
+                        <div class="form-group">
+                            <label> User Name :
+                                <input type="text" class="form-control" th:value="${user_i.getUsername()}"
+                                       name="username"/>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label> Password:
+                                <input type="password" class="form-control" th:value="${user_i.getPassword()}"
+                                       name="password"/>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label> Chat id:
+                                <input type="text" class="form-control" th:value="${user_i.getChat_id()}"
+                                       name="chat_id"/>
+                            </label>
+                        </div>
+
+                        <div class="row align-items-start">
+
+                            <div th:each="role : ${roles}">
+                                <div class="col">
+                                    <input type="checkbox" class="form-control" th:text="${role}" th:name="${role}"
+                                           th:checked="${#lists.contains(user_i.roles, role)}">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class=" my-3">
+                            <button type="submit" class="btn btn-primary">Обновить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <form th:method="DELETE" th:action="@{/users/{id}(id=${user_i.getId()})}">
+                <button type="submit" class="btn btn-outline-danger my-3">Удалить</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="parts/common :: bootstrap_scripts"></div>
+
+</body>
+</html>
